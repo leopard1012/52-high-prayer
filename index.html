@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>52 믿음고 소원기도</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>52 믿음고 소원기도</h1>
+
+        <div id="userInfo">
+            <p>사용자를 선택해주세요.</p>
+            <p>누적 완독: <span id="readCount">0</span>회</p>
+        </div>
+
+        <button id="changeUserButton">사용자 변경</button>
+
+        <hr>
+
+        <h2>오늘의 기도</h2>
+        <div id="prayerText">
+            <p>
+                하나님 아버지, ...
+                <br><br>
+                (기도문 내용)
+                <br><br>
+                ... 예수님의 이름으로 기도드립니다. 아멘.
+                </p>
+        </div>
+
+        <button id="completeButton" disabled>아래로 스크롤하여 완독 후 클릭</button>
+        <p id="messageArea" class="message"></p>
+
+    </div>
+
+    <div id="userSelectionModal" class="modal">
+        <div class="modal-content">
+            <h2>사용자 선택</h2>
+            <p>본인의 학년, 목장, 이름을 선택해주세요.</p>
+            <div class="select-group">
+                <label for="gradeSelect">학년:</label>
+                <select id="gradeSelect">
+                    <option value="">-- 학년 선택 --</option>
+                    </select>
+            </div>
+            <div class="select-group">
+                <label for="groupSelect">목장:</label>
+                <select id="groupSelect" disabled>
+                    <option value="">-- 목장 선택 --</option>
+                    </select>
+            </div>
+            <div class="select-group">
+                <label for="nameSelect">이름:</label>
+                <select id="nameSelect" disabled>
+                    <option value="">-- 이름 선택 --</option>
+                    </select>
+            </div>
+            <button id="confirmUserButton" disabled>선택 완료</button>
+            <p id="modalMessageArea" class="message error"></p>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

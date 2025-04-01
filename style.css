@@ -1,0 +1,194 @@
+/* 기본 스타일 및 모바일 우선 */
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 15px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    max-width: 800px; /* 데스크탑에서 너무 넓어지지 않도록 */
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #0056b3; /* 교회 느낌의 파란색 계열 */
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+#userInfo {
+    background-color: #e7f3ff; /* 밝은 파란색 배경 */
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 0.95em;
+}
+
+#userInfo p {
+    margin: 5px 0;
+}
+
+#readCount {
+    font-weight: bold;
+    color: #d9534f; /* 강조색 */
+}
+
+#prayerText {
+    margin-bottom: 25px;
+    font-size: 1.1em; /* 기도문 가독성 좋게 */
+    max-height: 60vh; /* 내용이 너무 길 경우 스크롤 생성 (선택사항) */
+    overflow-y: auto; /* 내용 길 경우 스크롤 */
+    padding-right: 10px; /* 스크롤바 공간 확보 */
+    border: 1px solid #eee;
+    padding: 15px;
+    background-color: #fdfdfd;
+    border-radius: 5px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1.1em;
+    color: #fff;
+    background-color: #007bff; /* 기본 버튼 파란색 */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #cccccc; /* 비활성화 시 회색 */
+    cursor: not-allowed;
+}
+
+#changeUserButton {
+    background-color: #6c757d; /* 사용자 변경 버튼은 다른 색 */
+    font-size: 0.9em;
+    padding: 8px 10px;
+    width: auto; /* 자동으로 너비 조절 */
+    display: inline-block; /* 다른 요소와 같은 줄에 */
+    margin-bottom: 15px;
+}
+#changeUserButton:hover:not(:disabled) {
+     background-color: #5a6268;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #eee;
+    margin: 20px 0;
+}
+
+/* 메시지 영역 스타일 */
+.message {
+    text-align: center;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+.message.success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+.message.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+.message:empty { /* 메시지 없을 때 숨김 */
+    display: none;
+}
+
+
+/* 사용자 선택 모달 스타일 */
+.modal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed; /* 화면 고정 */
+    z-index: 1000; /* 다른 요소 위에 표시 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* 내용 길면 스크롤 */
+    background-color: rgba(0,0,0,0.5); /* 반투명 배경 */
+    padding-top: 60px; /* 상단 여백 */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 25px;
+    border: 1px solid #888;
+    width: 85%; /* 모바일에서 적절한 너비 */
+    max-width: 400px; /* 최대 너비 제한 */
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    text-align: center;
+    color: #0056b3;
+}
+
+.select-group {
+    margin-bottom: 15px;
+}
+
+.select-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.select-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* 패딩 포함 너비 계산 */
+}
+
+.select-group select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+#confirmUserButton {
+    margin-top: 20px;
+}
+
+/* 데스크탑 등 넓은 화면에서의 스타일 조정 */
+@media (min-width: 600px) {
+    .container {
+        padding: 30px;
+    }
+    .modal-content {
+        width: 70%;
+    }
+}
