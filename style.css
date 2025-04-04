@@ -192,3 +192,9 @@ hr {
         width: 70%;
     }
 }
+
+/* style.css 파일에 추가 */
+#prayerText {
+    white-space: pre-wrap; /* 공백과 줄바꿈을 원본 그대로 표시하되, 자동 줄바꿈 허용 */
+    word-wrap: break-word; /* 긴 단어가 영역을 벗어나지 않도록 줄바꿈 */
+}

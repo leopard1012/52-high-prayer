@@ -1,5 +1,5 @@
 // Google Apps Script 웹 앱 URL (★★★★★ 중요: 본인의 URL로 반드시 변경하세요! ★★★★★)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdeZGu3Sdvs1WxtioX5WgasKEWdox58TI41-0Ed0mGRQD4xLcTKT76k000xIfNr2RX/exec'; // <--- 위에서 복사한 Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRUGXROn9y1KHbiQCkCcgzd6TUBYddM-_XfnkVd_BH1FrVYebZlstT0mIvGVtbSSC1xQ/exec'; // <--- 위에서 복사한 Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
 
 // --- DOM 요소 가져오기 ---
 const userInfoDiv = document.getElementById('userInfo');
@@ -311,6 +311,54 @@ function preselectDropdowns() {
     // 이 부분은 필요에 따라 추가 구현
 }
 
+// --- script.js 파일 상단 또는 함수 모아두는 곳에 추가 ---
+
+// 기도문 내용 로드 및 표시 함수
+function loadPrayerText() {
+    const prayerTextElement = document.getElementById('prayerText');
+    // 기존 내용을 로딩 메시지로 설정 (HTML에도 있지만 JS에서도 설정 가능)
+    prayerTextElement.innerHTML = '<p><em>기도문을 불러오는 중...</em></p>';
+
+    fetch(`${SCRIPT_URL}?action=getPrayerText`) // action=getPrayerText 추가
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP 오류! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.status === 'success' && typeof result.data === 'string') {
+                // 성공적으로 텍스트를 받아왔을 때
+                // 받아온 텍스트의 줄바꿈(\n)을 HTML 줄바꿈(<br>)으로 변경 (선택 사항)
+                // const formattedText = result.data.replace(/\n/g, '<br>');
+                // prayerTextElement.innerHTML = formattedText;
+
+                // 또는 innerText를 사용하여 텍스트와 줄바꿈 그대로 표시 (CSS로 white-space: pre-wrap; 필요할 수 있음)
+                prayerTextElement.innerText = result.data;
+                // CSS로 줄바꿈 처리: style.css 파일에 아래 내용 추가 권장
+                // #prayerText { white-space: pre-wrap; word-wrap: break-word; }
+            } else {
+                // 데이터 형식이 잘못되었거나 status가 success가 아닐 때
+                console.error('기도문 데이터 형식 오류:', result.message || '데이터 형식이 문자열이 아님');
+                prayerTextElement.innerText = '기도문을 불러오는 데 실패했습니다. (형식 오류)';
+            }
+        })
+        .catch(error => {
+            // fetch 자체 오류 또는 response.ok 아닌 경우
+            console.error('기도문 로드 fetch 오류:', error);
+            prayerTextElement.innerText = '기도문을 불러오는 데 실패했습니다. 잠시 후 다시 시도해주세요.';
+        });
+}
+
+
+// --- script.js 파일 하단의 초기화 실행 부분 수정 ---
+
+// 페이지 로드 시 실행될 초기화 함수들
+function initializeApp() {
+    loadStudentList(); // 기존 학생 명단 로드 함수 호출
+    loadPrayerText();  // 새로 추가한 기도문 로드 함수 호출
+}
+
 
 // 모달 열기
 function openModal() {
@@ -360,4 +408,4 @@ window.addEventListener('click', (event) => {
 
 // --- 초기화 실행 ---
 // 페이지 로드 시 학생 명단 로드 및 사용자 확인/선택 절차 시작
-loadStudentList();
+initializeApp();
