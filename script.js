@@ -1,5 +1,5 @@
 // Google Apps Script 웹 앱 URL (★★★★★ 중요: 본인의 URL로 반드시 변경하세요! ★★★★★)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRUGXROn9y1KHbiQCkCcgzd6TUBYddM-_XfnkVd_BH1FrVYebZlstT0mIvGVtbSSC1xQ/exec'; // <--- 위에서 복사한 Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwezHpB-xzkYdhF4o8mrCna39iycloqkQY-XUSHLnqWxkRBwzHvYz3SWBcBb9JBYKzPIw/exec'; // <--- 위에서 복사한 Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
 
 // --- DOM 요소 가져오기 ---
 const userInfoDiv = document.getElementById('userInfo');
