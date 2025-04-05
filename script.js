@@ -1,5 +1,5 @@
 // Google Apps Script 웹 앱 URL (★★★★★ 중요: 본인의 URL로 반드시 변경하세요! ★★★★★)
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwezHpB-xzkYdhF4o8mrCna39iycloqkQY-XUSHLnqWxkRBwzHvYz3SWBcBb9JBYKzPIw/exec'; // <--- 위에서 복사한 Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzkyF6vkVXOmcyt_8vCKSV52hpXyEQhZBlVo4tOotgPAud5h-T_0X51GhKoxPRZR-C7Qw/exec'; // <--- 위에서 복사한 Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
 
 // --- DOM 요소 가져오기 ---
 const userInfoDiv = document.getElementById('userInfo');
@@ -115,62 +115,65 @@ function handleScroll() {
 // 완독 체크 처리 함수
 function handleCompleteClick() {
     if (!currentUser || isProcessing || completeButton.disabled) {
-        return; // 사용자 없거나, 처리 중이거나, 버튼 비활성이면 무시
+        return;
     }
-
-    isProcessing = true; // 처리 시작 플래그
-    completeButton.disabled = true; // 버튼 즉시 비활성화
+    isProcessing = true;
+    completeButton.disabled = true;
     completeButton.textContent = '기록 중...';
-    showMessage(messageArea, ''); // 이전 메시지 삭제
+    showMessage(messageArea, '');
 
-    const dataToSend = {
+    // === 수정 시작: GET 요청을 위한 URL 파라미터 생성 ===
+    const params = new URLSearchParams({
+        action: 'logCompletion', // doGet에서 처리할 새로운 action 이름
         grade: currentUser.grade,
         group: currentUser.group,
         name: currentUser.name
-    };
+    });
+    const requestUrl = `${SCRIPT_URL}?${params.toString()}`;
+    // === 수정 끝 ===
 
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'cors', // CORS 허용 필요 (Apps Script 배포 시 '모든 사용자' 설정하면 보통 해결됨)
+    // === 수정 시작: fetch 옵션 변경 (GET 방식) ===
+    fetch(requestUrl, {
+        method: 'GET', // 메소드를 GET으로 변경
+        mode: 'cors',
         cache: 'no-cache',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        // Apps Script는 text/plain 으로 받을 수도 있음. 필요시 아래 주석 해제 및 JSON.stringify 제거
-        // headers: { 'Content-Type': 'text/plain;charset=utf-8', },
-        // body: JSON.stringify(dataToSend) // JSON 문자열로 전송
-        redirect: 'follow',
-        body: JSON.stringify(dataToSend) // POST 요청 본문에 데이터 담기
+        redirect: 'follow'
+        // GET 요청이므로 headers와 body는 필요 없음
     })
-    .then(response => response.json()) // 응답을 JSON으로 파싱
+    // === 수정 끝 ===
+    .then(response => { // 응답 처리 방식 변경: JSON 직접 파싱 시도
+        if (!response.ok) {
+           // 서버 응답이 2xx 상태 코드가 아닐 경우 오류 처리
+           return response.text().then(text => { // 오류 메시지를 텍스트로 받으려고 시도
+              throw new Error(`서버 응답 오류 (${response.status}): ${text || '내용 없음'}`);
+           });
+        }
+        return response.json(); // 정상 응답이면 JSON 파싱
+    })
     .then(result => {
+        // === 수정: 응답 데이터 구조가 바뀔 수 있으므로 확인 ===
+        // doGet에서 { status: 'success', message: '...' } 형태로 응답한다고 가정
         if (result.status === 'success') {
             showMessage(messageArea, result.message || '완독 기록 완료!', false);
-            // 현재 카운트를 1 증가시키거나, 통계를 다시 불러옴
-            fetchUserStats(); // 서버에서 최신 카운트를 다시 가져옴
-            // 성공 후 버튼 상태: 스크롤을 다시 해야 활성화되도록 그대로 둠
+            fetchUserStats(); // 통계 업데이트
             completeButton.textContent = '완독 확인 (다시 스크롤)';
-            // 스크롤 감지 다시 활성화
             scrollCheckEnabled = true;
         } else {
-            // 실패 시 사용자에게 오류 메시지 표시
+            // 실패 응답 처리
             showMessage(messageArea, result.message || '기록 중 오류가 발생했습니다.', true);
             completeButton.textContent = '오류 발생 (다시 시도)';
-            // 오류 발생 시 버튼 다시 활성화하여 재시도 가능하게 함 (선택적)
-             completeButton.disabled = false;
+            completeButton.disabled = false; // 재시도 가능하도록 버튼 활성화
         }
     })
     .catch(error => {
-        // 네트워크 오류 등 fetch 자체의 실패 처리
-        console.error('Error sending data:', error);
-        showMessage(messageArea, '데이터 전송 중 오류 발생. 인터넷 연결을 확인하세요.', true);
+        // 네트워크 오류 또는 위에서 throw된 오류 처리
+        console.error('Error sending data (GET):', error);
+        showMessage(messageArea, `데이터 전송 중 오류 발생: ${error.message}`, true);
         completeButton.textContent = '전송 오류 (다시 시도)';
-        completeButton.disabled = false; // 재시도 가능하게 버튼 활성화
+        completeButton.disabled = false;
     })
     .finally(() => {
-        isProcessing = false; // 처리 완료 플래그 해제
-        // 완독 버튼은 스크롤 감지에 의해 다시 활성화될 것이므로 여기서 활성화하지 않음.
-        // 오류 시에는 위에서 활성화 해주었음.
+        isProcessing = false;
     });
 }
 
